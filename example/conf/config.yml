@@ -1,0 +1,20 @@
+sid: 12345
+
+http:
+  listen_addr: 127.0.0.1:8100
+  link_addr: 127.0.0.1:8100
+
+elastic:
+  use: false
+#  host: http://192.168.20.77
+  host: http://192.168.20.24
+  port: 9200
+
+mongo:
+  use: false
+  uri: mongodb://admin:123456@127.0.0.1:27017
+  db: platform
+
+telegram:
+  use: true
+  token: 7247234459:AAHDQDmm2QrenYMWGWHkD1whlL3hcPS4DMg

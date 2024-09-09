@@ -2,7 +2,6 @@ package ws_session
 
 import (
 	"bytes"
-	pb "comm/t_proto/out/client"
 	"context"
 	"encoding/binary"
 	"github.com/gorilla/websocket"
@@ -242,8 +241,8 @@ LOOP:
 				break LOOP
 			}
 		case <-heartbeatTicker.C:
-			msg := new(pb.Heartbeat)
-			s.Send2User(pb.MsgID_HeartbeatId, msg)
+			//msg := new(pb.Heartbeat)
+			//s.Send2User(pb.MsgID_HeartbeatId, msg)
 		case <-s.ctx.Done():
 			break LOOP
 		}

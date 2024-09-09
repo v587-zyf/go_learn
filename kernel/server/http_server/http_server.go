@@ -58,12 +58,14 @@ func (s *HttpServer) Init(ctx context.Context, opts ...any) (err error) {
 		}
 	}
 
-	s.app.Use(cors.New(cors.Config{
-		AllowOrigins:     s.options.allowOrigins,              // 只允许来自这些特定源的请求 https://thunder.majyo.vip
-		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",       // 允许的 HTTP 方法
-		AllowHeaders:     "Authorization,Content-Type,Accept", // 只允许这些特定的头部
-		AllowCredentials: true,                                // 允许发送 cookies 和其他凭据
-	}))
+	if s.options.allowOrigins != "" {
+		s.app.Use(cors.New(cors.Config{
+			AllowOrigins:     s.options.allowOrigins,              // 只允许来自这些特定源的请求
+			AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",       // 允许的 HTTP 方法
+			AllowHeaders:     "Authorization,Content-Type,Accept", // 只允许这些特定的头部
+			AllowCredentials: true,                                // 允许发送 cookies 和其他凭据
+		}))
+	}
 
 	if s.options.isHttps {
 		err = s.InitHttps()
