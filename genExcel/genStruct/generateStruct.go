@@ -337,7 +337,7 @@ func (this *Generate) WriteNewFile() error {
 	}
 	header = fmt.Sprintf(header, *codePackage, str[len(str)-1])
 	data := header + "\n" +
-		`import c "core/tableDb"` +
+		`import c "github.com/v587-zyf/core/tableDb"` +
 		"\n" + this.loaderData +
 		"\n" + this.tableData +
 		"\n" + this.allFuncs +

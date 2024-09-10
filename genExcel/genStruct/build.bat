@@ -1,7 +1,8 @@
 @echo off
 
-:: go build -o D:\code\mokoko\thunder\bin\genStruct.exe .
-:: go build -o D:\code\mokoko\bar\bin\genStruct.exe .
+:: go build -o D:\code\go\mokoko\thunder\bin\genStruct.exe .
+:: go build -o D:\code\go\mokoko\bar\bin\genStruct.exe .
+:: go build -o D:\code\go\mokoko\bin\genStruct.exe .
 
 ::set PROJECT_ROOT_DIR=D:\code\golearn
 set PROJECT_ROOT_DIR=D:\code\mokoko\thunder
