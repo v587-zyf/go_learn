@@ -13,13 +13,14 @@ var (
 	allType          = flag.String("allType", "", "Specified field type")
 	generateLanguage = flag.Bool("l", false, "Path to save the makefile")
 	generateClient   = flag.Bool("c", false, "Path to save the makefile")
+	importStr        = flag.String("i", "", "import")
 	withoutExcel     = flag.String("withoutExcel", "", "过滤表")
 )
 
 func main() {
 	flag.Parse()
-	if *savePath == "" || *readPath == "" {
-		fmt.Printf("savePath, readPath or allType is nil\n")
+	if *savePath == "" || *readPath == "" || *importStr == "" {
+		fmt.Printf("savePath, readPath, importStr or allType is nil\n")
 		return
 	}
 

@@ -80,9 +80,10 @@ var (
 	structRemarks        = "	// %s"                               // 结构体备注
 	structValueEnd       = "\n"                                   // 结构体内容结束
 	structEnd            = "}\n\n"                                // 结构体结束
-	header               = "package %s %s\n\r"                    // 文件头
+	header               = "package %s\n\r"                       // 文件头
 	typeMapping          = map[string]string{
 		"number": "float64",
+		"float":  "float64",
 	}
 )
 
@@ -132,8 +133,6 @@ func (this *Generate) ReadExcel(readPath, savePath, allType string, generateClie
 		fName := file.Name()
 		fileSuffix := path.Ext(fName)
 		if fileSuffix != ".xlsx" ||
-			fName == "global.xlsx" ||
-			fName == "globals.xlsx" ||
 			hasChineseOrDefault(fName) ||
 			JudgeIndex(fName, "~$") ||
 			withoutExcel[fName] {
@@ -148,15 +147,15 @@ func (this *Generate) ReadExcel(readPath, savePath, allType string, generateClie
 		// 遍历工作表
 		sheetInfos := ""
 		for _, sheet := range wb.Sheets {
-			//if hasChineseOrDefault(sheet.Name) {
-			//	continue
-			//}
+			if hasChineseOrDefault(sheet.Name) {
+				continue
+			}
 			// 判断表格中内容的行数是否小于需要读取的行数
 			if sheet.MaxRow < lineNumber {
 				return fmt.Errorf("ReadExcel|sheet.MaxRow:%d < lineNumber:%d", sheet.MaxRow, lineNumber)
 			}
-			//sheetStructName := this.getSheetStructName(fileName, sheet.Name)
-			sheetStructName := this.getSheetStructName(fileName, fileName)
+			sheetStructName := this.getSheetStructName(fileName, sheet.Name)
+			//sheetStructName := this.getSheetStructName(fileName, fileName)
 			sheetStructName = ToCamelCase(sheetStructName)
 
 			if structName[sheetStructName] != "" {
@@ -169,7 +168,7 @@ func (this *Generate) ReadExcel(readPath, savePath, allType string, generateClie
 			if serverUse {
 				this.objsData += structData
 				sheetDatasName := sheetStructName + "s"
-				sheetKey := FirstRuneToUpper(strings.TrimSpace(sheet.Rows[1].Cells[1].Value))
+				sheetKey := FirstRuneToUpper(strings.TrimSpace(sheet.Rows[0].Cells[1].Value))
 				sheetKey = ToCamelCase(sheetKey)
 
 				if len(sheetKey) == 0 {
@@ -209,9 +208,6 @@ func (this *Generate) genGlobalConf(readPath string) string {
 	// 遍历工作表
 	var confFiled string
 	for _, sheet := range wb.Sheets {
-		//if sheet.Name != "global" {
-		//	continue
-		//}
 		if hasChineseOrDefault(sheet.Name) {
 			continue
 		}
@@ -221,7 +217,7 @@ func (this *Generate) genGlobalConf(readPath string) string {
 		valueCell := -1
 		descCell := -1
 		for k, v := range sheet.Rows[1].Cells {
-			if v.Value == "clinetType" {
+			if v.Value == "clientType" {
 				typeCell = k
 			} else if v.Value == "name" {
 				nameCell = k
@@ -231,11 +227,18 @@ func (this *Generate) genGlobalConf(readPath string) string {
 				descCell = k
 			}
 		}
+		if typeCell == -1 || nameCell == -1 || valueCell == -1 || descCell == -1 {
+			panic(fmt.Sprintf("global typeCell:%v nameCell:%v valueCell:%v descCell:%v", typeCell, nameCell, valueCell, descCell))
+		}
 
 		for k, v := range sheet.Rows {
 			if k < lineNumber {
 				continue
 			}
+			if len(v.Cells) == 0 {
+				break
+			}
+			//fmt.Printf("name:%v type:%v value:%v desc:%v\n", v.Cells[nameCell].Value, v.Cells[typeCell].Value, v.Cells[valueCell].Value, v.Cells[descCell].Value)
 			confFiled += fmt.Sprintf(FIELD_TEMP,
 				FirstRuneToUpper(v.Cells[nameCell].Value),
 				this.CheckType(v.Cells[typeCell].Value, "global"),
@@ -267,10 +270,15 @@ func (this *Generate) getSheetData(sheet *xlsx.Sheet) []*FileObjStruct {
 			break
 		}
 		sheetData = append(sheetData, &FileObjStruct{
-			Des:         strings.TrimSpace(sheet.Cell(0, i).Value),
-			Filed:       strings.TrimSpace(sheet.Cell(1, i).Value),
-			FileType:    strings.TrimSpace(sheet.Cell(2, i).Value),
-			FileUseType: strings.TrimSpace(sheet.Cell(3, i).Value),
+			//Des:         strings.TrimSpace(sheet.Cell(0, i).Value),
+			//Filed:       strings.TrimSpace(sheet.Cell(1, i).Value),
+			//FileType:    strings.TrimSpace(sheet.Cell(2, i).Value),
+			//FileUseType: strings.TrimSpace(sheet.Cell(3, i).Value),
+
+			Filed:       strings.TrimSpace(sheet.Cell(0, i).Value),
+			FileType:    strings.TrimSpace(sheet.Cell(1, i).Value),
+			FileUseType: strings.TrimSpace(sheet.Cell(2, i).Value),
+			Des:         strings.TrimSpace(sheet.Cell(3, i).Value),
 		})
 	}
 	return sheetData
@@ -313,7 +321,14 @@ func (this *Generate) SplicingData(data []*FileObjStruct, structObj string, gene
 			structData += fmt.Sprintf(structValueEnd)
 			serverUse = true
 		default:
-			continue
+			dataType := this.CheckType(value.FileType, structObj)
+			checkTag := this.checkTag(dataType)
+			structData += fmt.Sprintf(structValue, FirstRuneToUpper(value.Filed), dataType, value.Filed, value.Filed, checkTag)
+			if value.Des != "" {
+				structData += fmt.Sprintf(structRemarks, strings.Replace(value.Des, "\n", "", -1))
+			}
+			structData += fmt.Sprintf(structValueEnd)
+			serverUse = true
 		}
 	}
 
@@ -331,13 +346,14 @@ func (this *Generate) checkTag(dataType string) string {
 
 // 拼装好的struct写入新的文件
 func (this *Generate) WriteNewFile() error {
-	str := strings.Split(this.savePath, "\\")
-	if len(str) == 0 {
-		return fmt.Errorf("WriteNewFile|len(str) is 0")
-	}
-	header = fmt.Sprintf(header, *codePackage, str[len(str)-1])
+	//str := strings.Split(this.savePath, "\\")
+	//if len(str) == 0 {
+	//	return fmt.Errorf("WriteNewFile|len(str) is 0")
+	//}
+	//header = fmt.Sprintf(header, *codePackage, str[len(str)-1])
+	header = fmt.Sprintf(header, *codePackage)
 	data := header + "\n" +
-		`import c "github.com/v587-zyf/core/tableDb"` +
+		`import c "` + *importStr + `"` +
 		"\n" + this.loaderData +
 		"\n" + this.tableData +
 		"\n" + this.allFuncs +
@@ -359,12 +375,15 @@ func (this *Generate) WriteNewFile() error {
 func (this *Generate) CheckType(dataType string, source string) string {
 	filedType := this.allType[strings.ToLower(strings.TrimSpace(dataType))]
 	if filedType != "" {
+		if filedType == "IntMap" || filedType == "IntSlice" {
+			return "c." + filedType
+		}
 		return filedType
 	}
 	if typeMapping[dataType] != "" {
 		return typeMapping[dataType]
 	}
-	panic(fmt.Sprintf("表结构：%v,字段类型错误：%v", source, dataType))
+	panic(fmt.Sprintf("表结构:%v 字段类型:%s错误", source, dataType))
 	return ""
 }
 
@@ -396,7 +415,7 @@ func (this *Generate) SpecialFile(file *xlsx.File) ([][]string, error) {
 
 // 判断是否存在汉字或者是否为默认的工作表
 func hasChineseOrDefault(r string) bool {
-	if JudgeIndex(r, "Sheet") {
+	if JudgeIndex(r, "Sheet") || JudgeIndex(r, "sheet") {
 		return true
 	}
 	for _, v := range []rune(r) {
