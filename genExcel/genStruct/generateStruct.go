@@ -102,23 +102,23 @@ type Generate struct {
 // HmsTime,HmsTimes
 // bool
 // float64,FloatSlice
-func (this *Generate) genFiledType(allType string) {
+func (g *Generate) genFiledType(allType string) {
 	allTypeSlice := utils.NewStringSlice(allType, ",")
-	this.allType = make(map[string]string)
+	g.allType = make(map[string]string)
 	for _, v := range allTypeSlice {
-		this.allType[strings.ToLower(strings.TrimSpace(v))] = strings.TrimSpace(v)
+		g.allType[strings.ToLower(strings.TrimSpace(v))] = strings.TrimSpace(v)
 	}
-	fmt.Println("生成配置表的数据类型为：", this.allType)
+	fmt.Println("生成配置表的数据类型为：", g.allType)
 }
 
 // 读取excel
-func (this *Generate) ReadExcel(readPath, savePath, allType string, generateClient bool, withoutExcel map[string]bool) error {
+func (g *Generate) ReadExcel(readPath, savePath, allType string, generateClient bool, withoutExcel map[string]bool) error {
 	if savePath == "" || allType == "" {
 		return fmt.Errorf("ReadExcel|savePath or allType is nil")
 	}
 
-	this.genFiledType(allType)
-	this.savePath = savePath
+	g.genFiledType(allType)
+	g.savePath = savePath
 
 	files, err := os.ReadDir(readPath)
 	if err != nil {
@@ -154,19 +154,19 @@ func (this *Generate) ReadExcel(readPath, savePath, allType string, generateClie
 			if sheet.MaxRow < lineNumber {
 				return fmt.Errorf("ReadExcel|sheet.MaxRow:%d < lineNumber:%d", sheet.MaxRow, lineNumber)
 			}
-			sheetStructName := this.getSheetStructName(fileName, sheet.Name)
-			//sheetStructName := this.getSheetStructName(fileName, fileName)
+			sheetStructName := g.getSheetStructName(fileName, sheet.Name)
+			//sheetStructName := g.getSheetStructName(fileName, fileName)
 			sheetStructName = ToCamelCase(sheetStructName)
 
 			if structName[sheetStructName] != "" {
 				return fmt.Errorf("Have same sheet name!sheetName:%s, fileName1:%s, fileName2:%s ", sheet.Name, structName[sheet.Name], file.Name())
 			}
 			structName[sheetStructName] = file.Name()
-			sheetData := this.getSheetData(sheet)
+			sheetData := g.getSheetData(sheet)
 
-			structData, serverUse := this.SplicingData(sheetData, sheetStructName, generateClient)
+			structData, serverUse := g.SplicingData(sheetData, sheetStructName, generateClient)
 			if serverUse {
-				this.objsData += structData
+				g.objsData += structData
 				sheetDatasName := sheetStructName + "s"
 				sheetKey := FirstRuneToUpper(strings.TrimSpace(sheet.Rows[0].Cells[1].Value))
 				sheetKey = ToCamelCase(sheetKey)
@@ -186,71 +186,21 @@ func (this *Generate) ReadExcel(readPath, savePath, allType string, generateClie
 			loadFileInfos += fmt.Sprintf(FILE_INFO_TEMP, file.Name(), sheetInfos)
 		}
 	}
-	this.loaderData = fmt.Sprintf(LOADER_FILES_TEMP, loadFileInfos)
-	this.tableData = fmt.Sprintf(TB_TEMP, allFileDatas)
-	this.allFuncs = allFuncs
-	if this.objsData == "" {
-		return fmt.Errorf("ReadExcel|this.objsData is nil")
+	g.loaderData = fmt.Sprintf(LOADER_FILES_TEMP, loadFileInfos)
+	g.tableData = fmt.Sprintf(TB_TEMP, allFileDatas)
+	g.allFuncs = allFuncs
+	if g.objsData == "" {
+		return fmt.Errorf("ReadExcel|g.objsData is nil")
 	}
-	this.global = this.genGlobalConf(readPath)
-	err = this.WriteNewFile()
+	g.global = g.genGlobalConf(readPath)
+	err = g.WriteNewFile()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (this *Generate) genGlobalConf(readPath string) string {
-	wb, err := xlsx.OpenFile(readPath + "\\globals.xlsx")
-	if err != nil {
-		fmt.Println(fmt.Sprintf("ReadExcel|xlsx.OpenFile is err :%v", err))
-	}
-	// 遍历工作表
-	var confFiled string
-	for _, sheet := range wb.Sheets {
-		if hasChineseOrDefault(sheet.Name) {
-			continue
-		}
-
-		typeCell := -1
-		nameCell := -1
-		valueCell := -1
-		descCell := -1
-		for k, v := range sheet.Rows[1].Cells {
-			if v.Value == "clientType" {
-				typeCell = k
-			} else if v.Value == "name" {
-				nameCell = k
-			} else if v.Value == "value" {
-				valueCell = k
-			} else if v.Value == "desc" {
-				descCell = k
-			}
-		}
-		if typeCell == -1 || nameCell == -1 || valueCell == -1 || descCell == -1 {
-			panic(fmt.Sprintf("global typeCell:%v nameCell:%v valueCell:%v descCell:%v", typeCell, nameCell, valueCell, descCell))
-		}
-
-		for k, v := range sheet.Rows {
-			if k < lineNumber {
-				continue
-			}
-			if len(v.Cells) == 0 {
-				break
-			}
-			//fmt.Printf("name:%v type:%v value:%v desc:%v\n", v.Cells[nameCell].Value, v.Cells[typeCell].Value, v.Cells[valueCell].Value, v.Cells[descCell].Value)
-			confFiled += fmt.Sprintf(FIELD_TEMP,
-				FirstRuneToUpper(v.Cells[nameCell].Value),
-				this.CheckType(v.Cells[typeCell].Value, "global"),
-				strings.TrimSpace(v.Cells[nameCell].Value),
-				strings.TrimSpace(v.Cells[valueCell].Value),
-				strings.TrimSpace(v.Cells[descCell].Value))
-		}
-	}
-	return fmt.Sprintf(CONF_TEMP, confFiled)
-}
-
-func (this *Generate) getSheetStructName(fileName, sheetName string) string {
+func (g *Generate) getSheetStructName(fileName, sheetName string) string {
 	return FirstRuneToUpper(fileName) + FirstRuneToUpper(sheetName) + "Cfg"
 }
 
@@ -261,14 +211,15 @@ type FileObjStruct struct {
 	FileUseType string //字段应用
 }
 
-func (this *Generate) getSheetData(sheet *xlsx.Sheet) []*FileObjStruct {
+func (g *Generate) getSheetData(sheet *xlsx.Sheet) []*FileObjStruct {
 	sheetData := make([]*FileObjStruct, 0)
 	// 遍历列
 	for i := 1; i < sheet.MaxCol; i++ {
 		// 判断某一列的第二行是否为空
-		if sheet.Cell(1, i).Value == "" {
+		if sheet.Cell(0, i).Value == "" {
 			break
 		}
+		//fmt.Printf("第%d列的数据为:%s\n", i, sheet.Cell(0, i).Value)
 		sheetData = append(sheetData, &FileObjStruct{
 			//Des:         strings.TrimSpace(sheet.Cell(0, i).Value),
 			//Filed:       strings.TrimSpace(sheet.Cell(1, i).Value),
@@ -285,15 +236,15 @@ func (this *Generate) getSheetData(sheet *xlsx.Sheet) []*FileObjStruct {
 }
 
 // 拼装struct
-func (this *Generate) SplicingData(data []*FileObjStruct, structObj string, generateClient bool) (string, bool) {
+func (g *Generate) SplicingData(data []*FileObjStruct, structObj string, generateClient bool) (string, bool) {
 	serverUse := false
 	structObj = ToCamelCase(structObj)
 	structData := fmt.Sprintf(structBegin, structObj)
 	for _, value := range data {
 		switch strings.TrimSpace(value.FileUseType) {
 		case "s":
-			dataType := this.CheckType(value.FileType, structObj)
-			checkTag := this.checkTag(dataType)
+			dataType := g.CheckType(value.FileType, structObj)
+			checkTag := g.checkTag(dataType)
 			structData += fmt.Sprintf(structValueForServer, FirstRuneToUpper(value.Filed), dataType, value.Filed, checkTag)
 			if value.Des != "" {
 				structData += fmt.Sprintf(structRemarks, strings.Replace(value.Des, "\n", "", -1))
@@ -304,7 +255,7 @@ func (this *Generate) SplicingData(data []*FileObjStruct, structObj string, gene
 			if !generateClient {
 				continue
 			}
-			dataType := this.CheckType(value.FileType, structObj)
+			dataType := g.CheckType(value.FileType, structObj)
 			structData += fmt.Sprintf(structValueForClient, FirstRuneToUpper(value.Filed), dataType, value.Filed)
 			if value.Des != "" {
 				structData += fmt.Sprintf(structRemarks, strings.Replace(value.Des, "\n", "", -1))
@@ -312,8 +263,8 @@ func (this *Generate) SplicingData(data []*FileObjStruct, structObj string, gene
 			structData += fmt.Sprintf(structValueEnd)
 			serverUse = true
 		case "all", "a":
-			dataType := this.CheckType(value.FileType, structObj)
-			checkTag := this.checkTag(dataType)
+			dataType := g.CheckType(value.FileType, structObj)
+			checkTag := g.checkTag(dataType)
 			structData += fmt.Sprintf(structValue, FirstRuneToUpper(value.Filed), dataType, value.Filed, value.Filed, checkTag)
 			if value.Des != "" {
 				structData += fmt.Sprintf(structRemarks, strings.Replace(value.Des, "\n", "", -1))
@@ -321,8 +272,8 @@ func (this *Generate) SplicingData(data []*FileObjStruct, structObj string, gene
 			structData += fmt.Sprintf(structValueEnd)
 			serverUse = true
 		default:
-			dataType := this.CheckType(value.FileType, structObj)
-			checkTag := this.checkTag(dataType)
+			dataType := g.CheckType(value.FileType, structObj)
+			checkTag := g.checkTag(dataType)
 			structData += fmt.Sprintf(structValue, FirstRuneToUpper(value.Filed), dataType, value.Filed, value.Filed, checkTag)
 			if value.Des != "" {
 				structData += fmt.Sprintf(structRemarks, strings.Replace(value.Des, "\n", "", -1))
@@ -336,7 +287,7 @@ func (this *Generate) SplicingData(data []*FileObjStruct, structObj string, gene
 	return structData, serverUse
 }
 
-func (this *Generate) checkTag(dataType string) string {
+func (g *Generate) checkTag(dataType string) string {
 	checkTag := ""
 	if dataType == "ItemInfos" || dataType == "ItemInfo" {
 		checkTag = CHECK_ITEM_TEMP
@@ -345,8 +296,8 @@ func (this *Generate) checkTag(dataType string) string {
 }
 
 // 拼装好的struct写入新的文件
-func (this *Generate) WriteNewFile() error {
-	//str := strings.Split(this.savePath, "\\")
+func (g *Generate) WriteNewFile() error {
+	//str := strings.Split(g.savePath, "\\")
 	//if len(str) == 0 {
 	//	return fmt.Errorf("WriteNewFile|len(str) is 0")
 	//}
@@ -354,12 +305,12 @@ func (this *Generate) WriteNewFile() error {
 	header = fmt.Sprintf(header, *codePackage)
 	data := header + "\n" +
 		`import c "` + *importStr + `"` +
-		"\n" + this.loaderData +
-		"\n" + this.tableData +
-		"\n" + this.allFuncs +
-		"\n" + this.objsData +
-		"\n" + this.global
-	fw, err := os.OpenFile(this.savePath+"\\TbBase.go", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		"\n" + g.loaderData +
+		"\n" + g.tableData +
+		"\n" + g.allFuncs +
+		"\n" + g.objsData +
+		"\n" + g.global
+	fw, err := os.OpenFile(g.savePath+"\\TbBase.go", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return fmt.Errorf("WriteNewFile|OpenFile is err:%v", err)
 	}
@@ -372,8 +323,8 @@ func (this *Generate) WriteNewFile() error {
 }
 
 // 检测解析出来的字段类型是否符合要求
-func (this *Generate) CheckType(dataType string, source string) string {
-	filedType := this.allType[strings.ToLower(strings.TrimSpace(dataType))]
+func (g *Generate) CheckType(dataType string, source string) string {
+	filedType := g.allType[strings.ToLower(strings.TrimSpace(dataType))]
 	if filedType != "" {
 		if filedType == "IntMap" || filedType == "IntSlice" {
 			return "c." + filedType
@@ -387,7 +338,7 @@ func (this *Generate) CheckType(dataType string, source string) string {
 	return ""
 }
 
-func (this *Generate) SpecialFile(file *xlsx.File) ([][]string, error) {
+func (g *Generate) SpecialFile(file *xlsx.File) ([][]string, error) {
 	sheetData := make([][]string, 0)
 	// 遍历工作表
 	for _, sheet := range file.Sheets {
