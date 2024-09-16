@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"demo/log_transfer/es"
+	"example/module/log_transfer/es"
 	"fmt"
 	"github.com/Shopify/sarama"
 )

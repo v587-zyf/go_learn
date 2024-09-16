@@ -3,8 +3,8 @@ package mq
 import (
 	"errors"
 	"fmt"
-	"kernel/errcode"
-	"kernel/log"
+	"github.com/v587-zyf/gc/errcode"
+	"github.com/v587-zyf/gc/log"
 	"reflect"
 	"runtime"
 

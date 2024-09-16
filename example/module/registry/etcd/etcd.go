@@ -2,8 +2,8 @@ package etcd
 
 import (
 	"context"
-	"demo/registry"
 	"encoding/json"
+	"example/module/registry"
 	"fmt"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"path"

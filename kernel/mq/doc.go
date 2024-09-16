@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"kernel/errcode"
+	"github.com/v587-zyf/gc/errcode"
 	"reflect"
 
 	"github.com/golang/protobuf/proto"

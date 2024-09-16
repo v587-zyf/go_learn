@@ -1,13 +1,13 @@
 package logagent
 
 import (
-	"demo/logagent/conf"
-	"demo/logagent/etcd"
-	"demo/logagent/kafka"
-	"demo/logagent/tail_log"
+	"example/module/logagent/conf"
+	"example/module/logagent/etcd"
+	"example/module/logagent/kafka"
+	"example/module/logagent/tail_log"
 	"fmt"
+	"github.com/v587-zyf/gc/utils"
 	"gopkg.in/ini.v1"
-	"kernel/utils"
 	"sync"
 	"time"
 )

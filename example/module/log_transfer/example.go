@@ -1,9 +1,9 @@
 package log_transfer
 
 import (
-	"demo/log_transfer/conf"
-	"demo/log_transfer/es"
-	"demo/log_transfer/kafka"
+	"example/module/log_transfer/conf"
+	"example/module/log_transfer/es"
+	"example/module/log_transfer/kafka"
 	"fmt"
 	"gopkg.in/ini.v1"
 )

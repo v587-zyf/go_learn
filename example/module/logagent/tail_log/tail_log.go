@@ -2,7 +2,7 @@ package tail_log
 
 import (
 	"context"
-	"demo/logagent/kafka"
+	"example/module/logagent/kafka"
 	"fmt"
 	"github.com/hpcloud/tail"
 )

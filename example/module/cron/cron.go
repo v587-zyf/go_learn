@@ -3,7 +3,7 @@ package cron
 import (
 	"fmt"
 	"github.com/robfig/cron/v3"
-	"kernel/module"
+	"github.com/v587-zyf/gc/module"
 	"math/rand"
 	"runtime/debug"
 )

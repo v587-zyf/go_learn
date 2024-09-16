@@ -3,8 +3,8 @@ package telegram
 import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
+	"github.com/v587-zyf/gc/log"
 	"go.uber.org/zap"
-	"kernel/log"
 	"strings"
 )
 

@@ -1,10 +1,10 @@
 package telegram
 
 import (
-	"core/telegram/go_tg_bot"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/message"
+	"github.com/v587-zyf/gc/telegram/go_tg_bot"
 )
 
 const (

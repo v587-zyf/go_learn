@@ -7,5 +7,4 @@ use (
 	./kernel
 	./upload
 	./zinx
-	../mokoko/core
 )

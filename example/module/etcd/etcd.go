@@ -3,8 +3,8 @@ package etcd
 import (
 	"context"
 	"fmt"
+	"github.com/v587-zyf/gc/utils"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"kernel/utils"
 	"time"
 )
 

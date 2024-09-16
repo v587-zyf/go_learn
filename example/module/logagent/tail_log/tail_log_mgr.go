@@ -1,7 +1,7 @@
 package tail_log
 
 import (
-	"demo/logagent/etcd"
+	"example/module/logagent/etcd"
 	"fmt"
 	"time"
 )
