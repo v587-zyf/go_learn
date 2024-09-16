@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+option go_package = "pb";
+
+// max msgID 4999
+enum C_MSG {
+  ID_Heartbeat = 0;
+  ID_Kick_Ntf = 1;
+  ID_Err_Ntf = 2;
+  ID_Gm_Req = 3;
+  ID_Gm_Ack = 4;
+
+  ID_TestMsg = 999;
+
+  ID_Login_Req = 1001;
+  ID_Login_Ack = 1002;
+
+  ID_Verify_Req = 1003;
+  ID_Verify_Ack = 1004;
+
+  ID_Reconnect_Req = 1005;
+  ID_Reconnect_Ack = 1006;
+
+  ID_Enter_Req = 1007;
+  ID_Enter_Ntf = 1008;
+
+  ID_Move_Req = 1009;
+  ID_Move_Ack = 1010;
+
+  ID_OpenWall_Req = 1011;
+  ID_OpenWall_Ack = 1012;
+
+  ID_GetTreasure_Req = 1013;
+  ID_GetTreasure_Ack = 1014;
+  ID_OpenTreasure_Req = 1015;
+  ID_OpenTreasure_Ack = 1016;
+
+  ID_Revive_Req = 1017;
+  ID_Revive_Ack = 1018;
+
+  ID_ResetMap_Req = 1019;
+  ID_ResetMap_Ack = 1020;
+
+  ID_UpLv_Req = 1021;
+  ID_UpLv_Ack = 1022;
+
+  ID_Strength_Ntf = 1023;
+  ID_Income_Ntf = 1024;
+  ID_Diamond_Ntf = 1025;
+
+  ID_Card_Req = 1030;
+  ID_Card_Ack = 1031;
+  ID_Card_Ntf = 1032;
+  ID_CardUpLv_Req = 1033;
+  ID_CardUpLv_Ack = 1034;
+
+  ID_ShopBuy_Req = 1040;
+  ID_ShopBuy_Ack = 1041;
+
+  ID_Hasten_Req = 1051;
+  ID_Hasten_Ack = 1052;
+
+  ID_Invite_Req = 1061;
+  ID_Invite_Ack = 1062;
+  ID_InviteReward_Req = 1063;
+  ID_InviteReward_Ack = 1064;
+  ID_Invite_Ntf = 1065;
+
+  ID_RedPoint_Req = 1071;
+  ID_RedPoint_Ack = 1072;
+  ID_RedPoint_Ntf = 1073;
+
+  ID_Rank_Req = 1081;
+  ID_Rank_Ack = 1082;
+
+  ID_GuildList_Req = 1101;
+  ID_GuildList_Ack = 1102;
+  ID_GuildRank_Req = 1103;
+  ID_GuildRank_Ack = 1104;
+  ID_GuildJoin_Req = 1105;
+  ID_GuildJoin_Ack = 1106;
+  ID_GuildLeave_Req = 1107;
+  ID_GuildLeave_Ack = 1108;
+}

@@ -1,0 +1,41 @@
+sid: 12401
+
+dev: true
+
+http:
+  https: false
+  listen_addr: 127.0.0.1:8100
+  link_addr: 127.0.0.1:8100
+  pem: D:/code/go/mokoko/https/cert.crt
+  key: D:/code/go/mokoko/https/private.pem
+  allowOrigins: http://127.0.0.1
+
+grpc:
+  listen_addr: 127.0.0.1:8300
+  link_addr: 127.0.0.1:8300
+
+redis:
+  addrs:
+    - 127.0.0.1:7000
+    - 127.0.0.1:7001
+    - 127.0.0.1:7002
+    - 127.0.0.1:7003
+    - 127.0.0.1:7004
+    - 127.0.0.1:7005
+  addr: 127.0.0.1:7100
+  pass: f2bc5b4031bc45805c3a31ce916b6bea
+
+mongo:
+  uri: mongodb://admin:ASDF)&(*H123498-FQEW@127.0.0.1:27017
+  #uri: mongodb://localhost:27017/
+  db: mokoko_thunder
+
+table:
+  path: ../comm/t_config
+
+telegram:
+  #   rtest
+  login_token: 7492635198:AAFTNaXiRCpERqAQBaXOC3q2hRHAoqrUvpQ
+  client_url: https://thunder.majyo.vip
+  start_photo: https://candydream.mokoko.vip/source/3d19ea50aa4af0328cfee5c3d7b7e40.jpg
+  start_caption: The little rabbit bravely breaks through the candy formation, finds the pickaxe, and digs hard to get gold coins. These gold coins will help you get more airdrop rewards! Play to earn. 🎁

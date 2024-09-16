@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option go_package = "server";
+
+enum MsgType{
+  Client = 0;
+  Server = 1;
+}

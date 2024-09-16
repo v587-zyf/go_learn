@@ -1,0 +1,60 @@
+sid: 12301
+
+grpc:
+  listen_addr: register:8300
+  link_addr: 127.0.0.1:8300
+
+redis:
+  addrs:
+    - redis_redis0:7000
+    - redis_redis1:7001
+    - redis_redis2:7002
+    - redis_redis3:7003
+    - redis_redis4:7004
+    - redis_redis5:7005
+  addr: redis_redis100:7100
+  pass: f2bc5b4031bc45805c3a31ce916b6bea
+
+mongo:
+  uri: mongodb://admin:ASDF)&(*H123498-FQEW@47.236.235.165:27017
+  db: mokoko_thunder
+
+dev: false
+debug: false
+
+table:
+  path: ./config
+  
+telegram:
+  login_token: 7492635198:AAFTNaXiRCpERqAQBaXOC3q2hRHAoqrUvpQ
+#  login_token: 7114786236:AAGaW4WhHhp-z0tJfOEMLb5CXu3q_Fa8_Wk
+  listen_dev:
+    #    - name: rtest_dev_bot
+    #      token: 7492635198:AAFTNaXiRCpERqAQBaXOC3q2hRHAoqrUvpQ
+    #      chat_ids: [ -1002209798428 ]
+    # 甲方
+    - name: SoSoValue
+      token: 7145824162:AAGlaL7Ral7jetDG8MoU_N4b-P0fLUucInA
+      chat_ids: [ -1001765198458 ]
+    - name: SafePal
+      token: 7145824162:AAGlaL7Ral7jetDG8MoU_N4b-P0fLUucInA
+      chat_ids: [ -1001937794848 ]
+    - name: SoSoValueBot
+      token: test
+      chat_ids: [ ]
+    - name: twitter
+      token: 123
+      chat_ids: [ ]
+  listen:
+    - name: SoSoValue
+      token: 7145824162:AAGlaL7Ral7jetDG8MoU_N4b-P0fLUucInA
+      chat_ids: [ -1001765198458 ]
+    - name: SafePal
+      token: 7145824162:AAGlaL7Ral7jetDG8MoU_N4b-P0fLUucInA
+      chat_ids: [ -1001937794848 ]
+    - name: SoSoValueBot
+      token: test
+      chat_ids: [ ]
+    - name: twitter
+      token: 123
+      chat_ids: [ ]

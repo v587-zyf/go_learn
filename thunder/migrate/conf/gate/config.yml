@@ -1,0 +1,27 @@
+sid: 12101
+dev: false
+
+tcp:
+  listen_addr: :8200
+  link_addr: 127.0.0.1:8200
+
+ws:
+  addr: :8200
+  link_addr: thunder.majyo.vip:8200
+  pem: ./https/majyo.pem
+  key: ./https/majyo.key
+
+grpc:
+  listen_addr: register:8300
+  link_addr: 127.0.0.1:8300
+
+redis:
+  addrs:
+    - redis_redis0:7000
+    - redis_redis1:7001
+    - redis_redis2:7002
+    - redis_redis3:7003
+    - redis_redis4:7004
+    - redis_redis5:7005
+  addr: redis_redis100:7100
+  pass: f2bc5b4031bc45805c3a31ce916b6bea

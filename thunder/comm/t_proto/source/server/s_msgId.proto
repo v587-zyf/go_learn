@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "server";
+
+enum S_MSG {
+  ID_ZeroMsg = 0;
+  ID_MessageData = 5001;
+
+  ID_Register_Req = 5003;
+  ID_Register_Ack = 5004;
+
+  ID_Send2User = 5005;
+  ID_Broadcast = 5006;
+
+  ID_UserOnline_Ntf = 5007;
+  ID_UserOff_Ntf = 5008;
+  ID_UserIncome_Ntf = 5009;
+}

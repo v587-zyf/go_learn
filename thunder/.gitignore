@@ -1,0 +1,15 @@
+bin/center
+bin/game
+bin/gate
+bin/login
+bin/register
+*.log
+*.log_lock
+bin/Center.exe
+bin/Game.exe
+bin/Gate.exe
+bin/Login.exe
+bin/Register.exe
+login/head/10000001.jpg
+login/head/10000002.jpg
+bin/Client.exe

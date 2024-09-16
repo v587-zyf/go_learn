@@ -1,0 +1,28 @@
+sid: 12101
+dev: true
+
+tcp:
+  listen_addr: 127.0.0.1:8200
+  link_addr: 127.0.0.1:8200
+
+ws:
+  https: false
+  addr: 127.0.0.1:8201
+  link_addr: 127.0.0.1:8201
+  pem: D:/code/mokoko/https/cert.crt
+  key: D:/code/mokoko/https/private.pem
+
+grpc:
+  listen_addr: 127.0.0.1:8300
+  link_addr: 127.0.0.1:8300
+
+redis:
+  addrs:
+    - 127.0.0.1:7000
+    - 127.0.0.1:7001
+    - 127.0.0.1:7002
+    - 127.0.0.1:7003
+    - 127.0.0.1:7004
+    - 127.0.0.1:7005
+  addr: 127.0.0.1:7100
+  pass: f2bc5b4031bc45805c3a31ce916b6bea

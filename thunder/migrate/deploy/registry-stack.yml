@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  registry:
+    image: registry
+    networks:
+      - net
+    deploy:
+      placement:
+        constraints: [ node.hostname == master ]
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "5000:5000"
+    volumes:
+      - /data/docker_registry:/var/lib/registry
+networks:
+  net:
+    external: true

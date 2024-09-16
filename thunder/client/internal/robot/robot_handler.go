@@ -1,9 +1,8 @@
-package handler
+package robot
 
 import (
 	"bytes"
 	pb "comm/t_proto/out/client"
-	"comm/t_proto/out/server"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -20,36 +19,26 @@ type ClientWsHandlerUnit struct {
 	handler ws_session.Recv // 协议具体方法
 }
 
-type ClientWsHandler struct {
-	handlers map[uint16]*ClientWsHandlerUnit
-}
-
-var cWHandler = &ClientWsHandler{handlers: make(map[uint16]*ClientWsHandlerUnit)}
-
-func GetClientWsHandler() *ClientWsHandler {
-	return cWHandler
-}
-
-func (h *ClientWsHandler) Register(msgID uint16, handler ws_session.Recv) {
-	h.handlers[msgID] = &ClientWsHandlerUnit{
+func (r *Robot) RegisterHandler(msgID uint16, handler ws_session.Recv) {
+	r.handlers[msgID] = &ClientWsHandlerUnit{
 		msgID:   msgID,
 		handler: handler,
 	}
 }
 
-func (h *ClientWsHandler) GetHandler(msgID uint16) ws_session.Recv {
-	if h, ok := h.handlers[msgID]; ok {
+func (r *Robot) GetHandler(msgID uint16) ws_session.Recv {
+	if h, ok := r.handlers[msgID]; ok {
 		return h.handler
 	}
 	return nil
 }
 
-func (h *ClientWsHandler) HasHandler(msgID uint16) bool {
-	_, ok := h.handlers[msgID]
+func (r *Robot) HasHandler(msgID uint16) bool {
+	_, ok := r.handlers[msgID]
 	return ok
 }
 
-func (h *ClientWsHandler) UnmarshalClient(data []byte) (*iface.MessageFrame, error) {
+func (r *Robot) UnmarshalClient(data []byte) (*iface.MessageFrame, error) {
 	if len(data) < enums.MSG_HEADER_SIZE {
 		return nil, errors.New("packet has a wrong header, data too long")
 	}
@@ -77,36 +66,8 @@ func (h *ClientWsHandler) UnmarshalClient(data []byte) (*iface.MessageFrame, err
 
 	return nil, fmt.Errorf("unmarshl error, cmdId: %d, dataLen: %d", frame.MsgID, len(data))
 }
-func (h *ClientWsHandler) UnmarshalServer(data []byte) (*iface.MessageFrame, error) {
-	if len(data) < enums.MSG_HEADER_SIZE {
-		return nil, errors.New("packet has a wrong header, data too long")
-	}
 
-	buffer := bytes.NewBuffer(data)
-	frame := new(iface.MessageFrame)
-
-	binary.Read(buffer, binary.BigEndian, &frame.Len)
-	if frame.Len > enums.MSG_MAX_PACKET_SIZE-enums.MSG_HEADER_SIZE {
-		log.Error("err msg len", zap.Uint32("bodyLen", frame.Len))
-		return nil, fmt.Errorf("msg len too long")
-	}
-	binary.Read(buffer, binary.BigEndian, &frame.MsgID)
-	binary.Read(buffer, binary.BigEndian, &frame.Tag)
-	binary.Read(buffer, binary.BigEndian, &frame.UserID)
-
-	if msgPrototype := server.GetMsgProtoType(frame.MsgID); msgPrototype != nil {
-		body := reflect.New(msgPrototype).Interface().(iface.IProtoMessage)
-		if err := body.Unmarshal(data[enums.MSG_HEADER_SIZE:]); err != nil {
-			return nil, err
-		}
-		frame.Body = body
-		return frame, nil
-	}
-
-	return nil, fmt.Errorf("unmarshl error, cmdId: %d, dataLen: %d", frame.MsgID, len(data))
-}
-
-func (h *ClientWsHandler) Marshal(msgID uint16, Tag uint32, userID uint64, msg iface.IProtoMessage) ([]byte, error) {
+func (r *Robot) Marshal(msgID uint16, Tag uint32, userID uint64, msg iface.IProtoMessage) ([]byte, error) {
 	size := msg.Size()
 	data := make([]byte, enums.MSG_HEADER_SIZE+size)
 	n, err := msg.MarshalTo(data[enums.MSG_HEADER_SIZE:])

@@ -1,0 +1,156 @@
+version: "3.3"
+services:
+  redis0:
+    image: redis
+    container_name: redis0
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7000:7000"
+      - "17000:17000"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/redis/7000/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7000/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+  redis1:
+    image: redis
+    container_name: redis1
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7001:7001"
+      - "17001:17001"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/redis/7001/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7001/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+  redis2:
+    image: redis
+    container_name: redis2
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7002:7002"
+      - "17002:17002"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/redis/7002/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7002/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+  redis3:
+    image: redis
+    container_name: redis3
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7003:7003"
+      - "17003:17003"
+    volumes:
+      - /data/redis/7003/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7003/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+  
+  redis4:
+    image: redis
+    container_name: redis4
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7004:7004"
+      - "17004:17004"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/redis/7004/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7004/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+  
+  redis5:
+    image: redis
+    container_name: redis5
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7005:7005"
+      - "17005:17005"
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/redis/7005/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7005/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+  redis100:
+    image: redis
+    container_name: redis100
+    deploy:
+      placement:
+        constraints: [node.hostname == master]
+      endpoint_mode: vip
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - "7100:7100"
+    volumes:
+      - /data/redis/7100/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - /data/redis/7100/data:/data
+    networks:
+      - net
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+
+networks:
+  net:
+    external: true

@@ -1,0 +1,310 @@
+syntax = "proto3";
+
+option go_package = "pb";
+
+import "c_enum.proto";
+
+message Heartbeat{}
+
+message KickNtf{
+  int32 errNo = 1;    // 错误码 1000为成功
+  string errMsg = 2;  // 错误说明
+}
+
+// 错误消息 所有通信功能有错误就会返回此消息
+message ErrNtf {
+  int32 errNo = 1;    // 错误码
+  string errMsg = 2;  // 错误说明
+}
+
+message GmReq{
+  GmType gmType = 1;
+  string data = 2;
+}
+message GmAck{
+  GmType gmType = 1;
+  string data = 2;
+}
+
+message TestMsg{}
+
+message LoginReq{
+  LoginType type = 1;   // 登陆类型 枚举
+  string initData = 2;  // tg数据
+  uint64 invite = 3;    // 邀请人id
+}
+message LoginAck{
+  uint64 userID = 1;    // 用户id
+  string token = 2;     // token 进入或重连游戏校验
+  string linkAddr = 3;  // 连接游戏地址
+}
+
+message VerifyReq{
+  string token = 1;
+}
+message VerifyAck{
+  int32 errNo = 1;    // 错误码 1000为成功
+  string errMsg = 2;  // 错误说明
+}
+
+message ReconnectReq{
+  string token = 1;
+}
+message ReconnectAck{
+  int32 errNo = 1;    // 错误码 1000为成功
+  string errMsg = 2;  // 错误说明
+}
+
+message MapUnit {
+  int32 id = 1; // 格子id
+  int32 x = 2;  // 格子x坐标轴
+  int32 y = 3;  // 格子y坐标轴
+  int32 thunder = 4;  // 地雷数量
+  TileType tileType = 5;  // 格子类型
+}
+message Maps {
+  int32 birthX = 1;    // 出生点x
+  int32 birthY = 2;    // 出生点y
+  int32 treasure = 3; // 宝箱总数量
+  int32 nowX = 4; // 当前所在x
+  int32 nowY = 5; // 当前所在y
+  repeated MapUnit grids = 6;
+  int32 reTreasure = 7; // 宝箱剩余数量
+}
+message EnterReq {}
+message EnterNtf {
+  int32 lv = 1;               // 用户等级
+  double gold = 2;            // 金币
+  Maps maps = 3;              // 地图
+  int32 strength = 4;         // 体力
+  bool dead = 5;              // 是否死亡
+  bool freeResetMap = 6;      // 是否可以免费重置地图
+  string head = 7;            // 头像
+  int32 diamond = 8;          // 钻石
+  repeated ShopUnit shop = 9; // 商城
+  int32 extra_strength = 10;  // 额外体力
+  Hasten hasten = 11;         // 加速
+  repeated RedPointUnit redPoint = 12;  // 红点
+  uint64 guildId = 13;        // 工会id
+}
+
+message MoveReq{
+  int32 x = 1;  // 目的地x
+  int32 y = 2;  // 目的地y
+}
+message MoveAck{
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message OpenWallReq{
+  int32 x = 1;
+  int32 y = 2;
+}
+message OpenWallAck{
+  int32 strength = 1;         // 体力
+  double gold = 2;            // 用户金币
+  bool dead = 3;              // 是否死亡
+  repeated MapUnit grids = 4; // 有变动的格子(不是所有的)
+  bool isOver = 5;            // 是否通关
+  int32 extra_strength = 6;   // 额外体力
+}
+
+message GetTreasureReq{
+  int32 x = 1;
+  int32 y = 2;
+}
+message GetTreasureAck{
+  double gold = 1;
+}
+message OpenTreasureReq{
+  int32 x = 1;
+  int32 y = 2;
+}
+message OpenTreasureAck{
+  double gold = 1;  // 用户金币
+  MapUnit grid = 2; // 格子信息
+  int32 treasure = 3; // 宝箱剩余数量
+}
+
+message ReviveReq{}
+message ReviveAck{
+  bool dead = 1;      // 是否死亡
+  int32 strength = 2; // 用户体力
+  MapUnit grid = 3;   // 地雷格子信息
+  int32 nowX = 4;     // 当前所在x
+  int32 nowY = 5;     // 当前所在y
+  repeated MapUnit grids = 6; // 有变动的格子(不是所有的)
+  int32 extra_strength = 7;   // 额外体力
+}
+
+message ResetMapReq{}
+message ResetMapAck{
+  int32 strength = 1;         // 体力
+  Maps maps = 2;              // 地图
+  bool freeResetMap = 3;      // 是否可以免费重置地图
+  int32 extra_strength = 4;   // 额外体力
+}
+
+message UpLvReq{}
+message UpLvAck{
+  int32 lv = 1;    // 用户等级
+  double gold = 2; // 金币
+  bool freeResetMap = 3;  // 是否可以免费重置地图
+}
+
+message StrengthNtf{
+  int32 strength = 1;         // 体力
+  int32 extra_strength = 2;  // 额外体力
+}
+message IncomeNtf {
+  double gold = 1;  // 挂机收益就是目前玩家金币 离线收益则为离线期间的收益
+  IncomeType incomeType = 2;  // 收益类型
+}
+message DiamondNtf {
+  int32 diamond = 1;            // 玩家拥有钻石
+  DiamondType diamondType = 2;  // 收益类型
+}
+
+message CardReq{}
+message CardAck{
+  map<int32, int32> data = 1;  // id,lv
+}
+message CardNtf {
+  map<int32, int32> data = 1;  // id,lv
+}
+message CardUpLvReq{
+  int32 id = 1; // 卡牌id
+  ConsumeType consumeType = 2;
+}
+message CardUpLvAck{
+  int32 id = 1; // 卡牌id
+  int32 lv = 2; // 卡牌等级
+}
+
+message ShopUnit {
+  ShopType shopBuyType = 1;
+  int32 buyNum = 2; // 已购买次数
+}
+message ShopBuyReq {
+  int32 shopId = 1; // shop表id
+}
+message ShopBuyAck {
+  int32 shopId = 1;          // shop表id
+  int32 diamond = 2;         // 钻石
+  int32 strength = 3;        // 体力
+  ShopUnit info = 4;         // 商城
+  int32 extra_strength = 5;  // 额外体力
+}
+
+message HastenUnit {
+  HastenType hastenType = 1;
+  int64 startTime = 2;  // 加速开始时间(时间戳)
+  int64 endTime = 3;    // CD结束时间(时间戳)
+}
+message Hasten {
+  repeated HastenUnit hasten = 1;
+  int64 endTime = 2;  // 最终结束时间(时间戳)
+}
+message HastenReq {
+  HastenType hastenType = 1;
+}
+message HastenAck {
+  HastenUnit hasten = 1;
+  int64 endTime = 2;  // 最终结束时间(时间戳)
+}
+
+message InviteUnit {
+  uint64 uid = 1;
+  string head = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string user_name = 5;
+  int32 lv = 6;         // 等级
+  int32 diamond = 7;    // 收益
+}
+message InviteReq {}
+message InviteAck {
+  repeated int32 rewards = 1;       // 已领取人数奖励表id
+  repeated InviteUnit invites = 2;  // 邀请列表
+  bool flag = 3;
+}
+message InviteRewardReq {
+  int32 id = 1; // invite_num表id
+}
+message InviteRewardAck {
+  int32 id = 1;
+}
+message InviteNtf {
+  uint64 invitees = 1;  // 被邀请者id
+}
+
+message RedPointUnit {
+  RedPointType redPointType = 1;
+  bool flag = 2;  // true = 已查看
+}
+message RedPointReq {
+  RedPointType redPointType = 1;
+}
+message RedPointAck {
+  RedPointUnit redPoint = 1;
+}
+message RedPointNtf {
+  repeated RedPointUnit redPoint = 1;  // 红点
+}
+
+message RankUnit {
+  uint64 uid = 1;
+  int32 ranking = 2;  // 排名
+  string head = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string user_name = 6;
+  double gold = 7;
+}
+message RankReq {
+  RankType rankType = 1;
+  int32 lv = 2;
+}
+message RankAck {
+  RankType rankType = 1;
+  int32 lv = 2;
+  repeated RankUnit list = 3;
+  RankUnit me = 4;  // 当前用户
+}
+
+message GuildUnit {
+  uint64 guildId = 1;
+  int32 ranking = 2;  // 排名
+  string name = 3;
+  int32 member = 4;   // 公会人数
+  double gold = 5;
+}
+// 公会列表 && 公会详情页公会排行
+message GuildListReq {
+  RankType rankType = 1;
+}
+message GuildListAck {
+  RankType rankType = 1;
+  repeated GuildUnit list = 2;
+}
+// 公会详情页排行
+message GuildRankReq {
+  RankType rankType = 1;
+  uint64 guildId = 2;
+}
+message GuildRankAck {
+  RankType rankType = 1;
+  uint64 guildId = 2;
+  repeated RankUnit list = 3;
+}
+message GuildJoinReq {
+  uint64 guildId = 1;
+}
+message GuildJoinAck {
+  uint64 guildId = 1;
+}
+message GuildLeaveReq {}
+message GuildLeaveAck {
+  bool flag = 1;  // true = 退出公会
+}

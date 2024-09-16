@@ -1,0 +1,16 @@
+echo start del .log...
+for /r %%i in (*.log) do (
+    del "%%i"
+    echo del: "%%i"
+)
+echo end del .log...
+
+echo start del .log_lock...
+for /r %%i in (*.log_lock) do (
+    del "%%i"
+    echo del "%%i"
+)
+echo end del .log_lock...
+
+echo end del all ....
+::pause

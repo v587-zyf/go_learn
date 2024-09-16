@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+option go_package = "pb";
+
+enum LoginType {
+  password = 0; // 账号密码
+  telegram = 1; // tg
+}
+
+enum TileType {
+  Empty = 0;  // 空
+  Wall = 1;   // 墙
+  Player = 2; // 玩家
+  Treasure = 3; // 宝箱
+  Thunder = 4;  // 地雷
+}
+
+// 不做特别说明 直接传数字即可
+enum GmType {
+  Set_Gold = 0;     // 设置金币
+  Set_Strength = 1; // 设置体力
+  Set_User_Lv = 2;  // 设置玩家等级
+  Set_Card_Lv = 3;  // 设置卡牌等级 card_id#lv 如：1#10
+  Reset_Card = 4;   // 重置卡牌
+  Set_Diamond = 5;  // 设置钻石
+  Set_Shop_Num = 6; // 设置商城次数 ShopType#num 如:0#20
+  Reset_Shop = 7;   // 重置商城
+  Reset_Hasten = 8; // 重置加速
+  Reset_Invite_Reward = 9;  // 重置邀请奖励
+}
+
+enum ConsumeType {
+  Gold = 0;     // 金币
+  Diamond = 1;  // 钻石
+}
+
+enum IncomeType {
+  Off = 0;    // 离线收益
+  OnHook = 1; // 挂机收益
+}
+
+enum ShopType {
+  Default = 0;          // 占位
+  Normal_Strength = 1;  // 普通体力
+  Extra_Strength = 2;   // 额外体力
+}
+
+enum HastenType {
+  Free = 0;     // 免费加速
+  Diamonds = 1; // 钻石加速
+  Link = 2;     // 链上
+}
+
+enum DiamondType {
+  Invite = 0;   // 邀请
+  Pay = 1;      // 支付
+}
+
+enum RedPointType {
+  RedPointType_Empty = 0;  // 占位
+  Card = 1; // 卡牌
+}
+
+enum RankType {
+  RankType_Empty = 0; // 占位
+  RankDaily = 1;      // 每日
+  RankWeekly = 2;     // 每周
+}

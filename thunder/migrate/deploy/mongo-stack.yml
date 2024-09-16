@@ -1,0 +1,67 @@
+version: "3.3"
+services:
+  shard1:
+    image: mongo
+    networks:
+      - net
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == node1
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+    volumes:
+      - /data/mongo/shard1:/data/db
+    command: mongod --shardsvr --directoryperdb --replSet shard1
+
+  shard2:
+    image: mongo
+    networks:
+      - net
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == node2
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+    volumes:
+      - /data/mongo/shard2:/data/db
+    command: mongod --shardsvr --directoryperdb --replSet shard2
+
+  config:
+    image: mongo
+    networks:
+      - net
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == master
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+    volumes:
+      - /data/mongo/config:/data/configdb
+    command: mongod --configsvr --directoryperdb --replSet mongocfg
+
+  mongos:
+    image: mongo
+    command: mongos --configdb mongocfg/config:27019 --bind_ip 0.0.0.0 --port 27017
+    networks:
+      - net
+    ports:
+      - 27017:27017
+    depends_on:
+      - config
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == master
+      restart_policy:
+        condition: on-failure
+      mode: global
+      
+networks:
+  net:
+    external: true

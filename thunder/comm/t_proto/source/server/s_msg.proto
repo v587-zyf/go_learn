@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option go_package = "server";
+
+//import "google/protobuf/empty.proto";
+import "s_enum.proto";
+
+message ZeroMsg {}
+
+message MessageData {
+  int32 sender = 1;
+  int32 receiver = 2;
+  bytes content = 3;
+  MsgType msgType = 4;
+}
+
+service RegisterService {
+  //  rpc Register(RegisterReq) returns (RegisterAck);
+  rpc CenterMsg(stream MessageData) returns (stream MessageData);
+  rpc GateMsg(stream MessageData) returns (stream MessageData);
+  rpc GameMsg(stream MessageData) returns (stream MessageData);
+  rpc LoginMsg(stream MessageData) returns (stream MessageData);
+  //  rpc GameMsg(MessageData) returns (google.protobuf.Empty);
+}
+
+message RegisterReq {
+  uint64 id = 1;
+}
+
+message RegisterAck {
+  bool success = 1;
+}
+
+message Send2User {
+  int32 msgID = 1;
+  bytes content = 2;
+}
+
+message Broadcast {
+  int32 msgID = 1;
+  bytes content = 2;
+}
+
+message UserOnlineNtf {}
+message UserOffNtf {}
+message UserIncomeNtf {}

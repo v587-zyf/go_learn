@@ -1,0 +1,27 @@
+sid: 9999
+#dev: true
+dev: false
+
+http:
+  listen_addr: thunder.majyo.vip:8101
+#  listen_addr: 47.236.235.165:8101
+#  listen_addr: 127.0.0.1:8100
+  link_addr: 127.0.0.1:8100
+  pem: D:/code/mokoko/https/cert.crt
+  key: D:/code/mokoko/https/private.pem
+
+tcp:
+  listen_addr: 127.0.0.1:8201
+  link_addr: 127.0.0.1:8201
+
+redis:
+  addr: 127.0.0.1:6379
+  pwd:
+  #pwd: f2bc5b4031bc45805c3a31ce916b6bea
+
+mongo:
+  #  uri: mongodb://admin:ASDF)&(*H123498-FQEW@127.0.0.1:27017
+  uri: mongodb://localhost:27017/
+  db: mokoko_bar
+
+tabledb: ./config

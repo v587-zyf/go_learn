@@ -1,0 +1,107 @@
+version: "3.3"
+
+services:
+      
+  register:
+    user: root
+    image: 47.236.235.165:5000/register:dev
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    ports:
+      - 8300:8300
+    networks:
+      - net
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/go/thunder/config:/app/config
+      - /data/go/thunder/conf/register:/app/conf
+      - /data/go/thunder/logs/register:/app/log
+
+  center:
+    user: root
+    image: 47.236.235.165:5000/center:dev
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    networks:
+      - net
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/go/thunder/config:/app/config
+      - /data/go/thunder/conf/center:/app/conf
+      - /data/go/thunder/logs/center:/app/log
+    depends_on:
+      - register
+      
+  login:
+    user: root
+    image: 47.236.235.165:5000/login:dev
+    ports:
+      - 8101:8101
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    networks:
+      - net
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/go/thunder/config:/app/config
+      - /data/go/thunder/conf/login:/app/conf
+      - /data/go/thunder/logs/login:/app/log
+    depends_on:
+      - register
+      
+  gate:
+    user: root
+    image: 47.236.235.165:5000/gate:dev
+    ports:
+      - 8200:8200
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    networks:
+      - net
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/go/thunder/config:/app/config
+      - /data/go/thunder/conf/gate:/app/conf
+      - /data/go/thunder/logs/gate:/app/log
+      - /data/https:/app/https
+    depends_on:
+      - register
+      
+  game:
+    user: root
+    image: 47.236.235.165:5000/game:dev
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 60s
+    networks:
+      - net
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /data/go/thunder/config:/app/config
+      - /data/go/thunder/conf/game:/app/conf
+      - /data/go/thunder/logs/game:/app/log
+    depends_on:
+      - register
+
+networks:
+  net:
+    external: true

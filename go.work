@@ -7,4 +7,12 @@ use (
 	./kernel
 	./upload
 	./zinx
+
+	./thunder/center
+	./thunder/client
+	./thunder/comm
+	./thunder/game
+	./thunder/gate
+	./thunder/login
+	./thunder/register
 )
