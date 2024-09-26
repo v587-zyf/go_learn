@@ -28,8 +28,8 @@ func main() {
 		fmt.Println("out is nil")
 		return
 	}
-	fmt.Println("source dir:", *source)
-	fmt.Println("out dir:", *out)
+	//fmt.Println("source dir:", *source)
+	//fmt.Println("out dir:", *out)
 	conf.Init(*source, *out)
 
 	os.Mkdir(*out, 0755)

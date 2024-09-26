@@ -45,6 +45,20 @@ func ContainsAll(s string, subs ...string) bool {
 	return false
 }
 
+func filter[T comparable](data []T, f func(T) bool) []T {
+	var result []T
+	for _, v := range data {
+		if f(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func isNotEmpty(s string) bool {
+	return s != ""
+}
+
 func loadIdMapData() IdMapData {
 	list := make([]IdMapUnit, 0)
 
@@ -68,23 +82,27 @@ func loadIdMapData() IdMapData {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		n := scanner.Text()
+
+		if strings.Contains(n, `go_package`) {
+			n = strings.ReplaceAll(n, `"`, "")
+			packageSlice := strings.Split(n, ";")
+			packageSlice = filter(packageSlice, isNotEmpty)
+			data.Package = packageSlice[len(packageSlice)-1]
+			continue
+		}
+
 		n = parseLine(n)
 		if len(n) == 0 {
 			continue
 		}
 
-		subs := []string{"syntax", "enum", "}", "//"}
+		subs := []string{"syntax", "enum", "}", "//", "package"}
 		if ContainsAll(n, subs...) {
 			continue
 		}
 
 		str := splits(n)
 		if len(str) == 0 {
-			continue
-		}
-
-		if strings.Contains(n, `go_package`) {
-			data.Package = str[1]
 			continue
 		}
 
